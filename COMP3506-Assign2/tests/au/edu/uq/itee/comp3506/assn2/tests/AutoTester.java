@@ -9,7 +9,9 @@ import au.edu.uq.itee.comp3506.assn2.api.TestAPI;
 import au.edu.uq.itee.comp3506.assn2.entities.CallRecord;
 import au.edu.uq.itee.comp3506.assn2.entities.DataReader;
 import au.edu.uq.itee.comp3506.assn2.entities.LinkedList;
-import au.edu.uq.itee.comp3506.assn2.entities.PhoneNumber;
+import au.edu.uq.itee.comp3506.assn2.entities.SwitchElement;
+import au.edu.uq.itee.comp3506.assn2.entities.SwitchList;
+import au.edu.uq.itee.comp3506.assn2.entities.CallPair;
 
 /**
  * Hook class used by automated testing tool.
@@ -21,9 +23,9 @@ import au.edu.uq.itee.comp3506.assn2.entities.PhoneNumber;
 public final class AutoTester implements TestAPI {
 	// TODO Provide any data members required for the methods below to work correctly with your application.
 	DataReader dataReader;
-	LinkedList<PhoneNumber> phoneNumberPairList;
-	PhoneNumber phoneNumber;
-	int[] switchesList;
+	LinkedList<CallPair> phoneNumberPairList;
+	CallPair phoneNumber;
+	SwitchList switchesList;
 	public AutoTester() throws IOException{
 		// TODO Create and initialise any objects required by the methods below.
 		dataReader=new DataReader();
@@ -33,7 +35,6 @@ public final class AutoTester implements TestAPI {
 		dataReader.closeFile();
 		
 	}
-	
 	
 	/**
 	 * 
@@ -54,7 +55,7 @@ public final class AutoTester implements TestAPI {
 		List<Long> receivers=new ArrayList<Long>();
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
-			PhoneNumber element=(PhoneNumber)phoneNumberPairList.reverseHead().getElement();
+			CallPair element=(CallPair)phoneNumberPairList.reverseHead().getElement();
 				if(element.getCaller()==dialler){
 					receivers.add(element.getReceiver());
 			}
@@ -62,22 +63,82 @@ public final class AutoTester implements TestAPI {
 		return receivers;
 	}
 
+	
+	
+	/**
+	 * 
+	 * Runtime Complexity of used method: 
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);	
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 *  5. getCaller()					Runtime Complexity: O(1);
+	 *  6. getReceiver()				Runtime Complexity: O(1);
+	 *  7. isInTime()					Runtime Complexity:	O(1);
+	 *  
+	 * In the method, the for loop has been used which is linear runtime complexity. Meanwhile other methods' 
+	 * runtime complexity is constant. Thus the whole runtime complexity of the method is O(n) 
+	 * Runtime Complexity of the whole method:O(n) 
+	 */
 	@Override
 	public List<Long> called(long dialler, LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Long> receivers=new ArrayList<Long>();
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			CallPair element=(CallPair)phoneNumberPairList.reverseHead().getElement();
+				if(element.isIntime(startTime, endTime)){
+					if(element.getCaller()==dialler){
+						receivers.add(element.getReceiver());
+					}
+				}
+		}
+		return receivers;
 	}
 
+	
+	
+	/**
+	 * 
+	 * Runtime Complexity of used method: 
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);	
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 *  5. getCaller()					Runtime Complexity: O(1);
+	 *  6. getReceiver()				Runtime Complexity: O(1);
+	 *  
+	 * In the method, the for loop has been used which is linear runtime complexity. Meanwhile other methods' 
+	 * runtime complexity is constant. Thus the whole runtime complexity of the method is O(n) 
+	 * Runtime Complexity of the whole method:O(n) 
+	 */
 	@Override
 	public List<Long> callers(long receiver) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Long> caller=new ArrayList<Long>();
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			CallPair element=(CallPair)phoneNumberPairList.reverseHead().getElement();
+				if(element.getReceiver()==receiver){
+					caller.add(element.getCaller());
+			}
+		}
+		return caller;
 	}
 
+	
+	
 	@Override
 	public List<Long> callers(long receiver, LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Long> callers=new ArrayList<Long>();
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			CallPair element=(CallPair)phoneNumberPairList.reverseHead().getElement();
+				if(element.isIntime(startTime, endTime)){
+					if(element.getReceiver()==receiver){
+						callers.add(element.getCaller());
+					}
+				}
+		}
+		return callers;
 	}
 
 	@Override
@@ -106,26 +167,143 @@ public final class AutoTester implements TestAPI {
 
 	@Override
 	public int maxConnections() {
-		// TODO Auto-generated method stub
-		return 0;
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		LinkedList<Integer> allConnectionPath=new LinkedList<>();
+		//combine all the connectionPath into one linkList 
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			allConnectionPath.combineLinkList(phoneNumberPairList.reverseHead().getElement().getConnectionPath());
+		}
+		
+		int maxCount=0;
+		int maxCountSwitch=0;
+		for(int i=0;i<allConnectionPath.getSize();i++){
+			int switchID=allConnectionPath.reverseHead().getElement();
+			
+			for(int j=0;j<switchesList.getCapacity();j++){
+				SwitchElement currentSwitch=switchesList.getElement(j);
+				if(currentSwitch.getKey()==switchID){
+					currentSwitch.addCount();
+					if(maxCount<currentSwitch.getValue()){
+						maxCount=currentSwitch.getValue();
+						maxCountSwitch=currentSwitch.getKey();
+					}else if(maxCount==currentSwitch.getValue()&&
+							maxCountSwitch>currentSwitch.getKey()){
+						maxCountSwitch=currentSwitch.getKey();
+					}
+				}
+			}
+		}
+		return maxCountSwitch;
 	}
 
 	@Override
 	public int maxConnections(LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return 0;
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		LinkedList<Integer> allConnectionPath=new LinkedList<>();
+		//combine all the connectionPath into one linkList 
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			CallPair element=phoneNumberPairList.reverseHead().getElement();
+			if(element.isIntime(startTime, endTime)){
+				allConnectionPath.combineLinkList(element.getConnectionPath());
+			}
+		}
+		
+		int maxCount=0;
+		int maxCountSwitch=0;
+		for(int i=0;i<allConnectionPath.getSize();i++){
+			int switchID=allConnectionPath.reverseHead().getElement();
+			
+			for(int j=0;j<switchesList.getCapacity();j++){
+				SwitchElement currentSwitch=switchesList.getElement(j);
+				if(currentSwitch.getKey()==switchID){
+					currentSwitch.addCount();
+					if(maxCount<currentSwitch.getValue()){
+						maxCount=currentSwitch.getValue();
+						maxCountSwitch=currentSwitch.getKey();
+					}else if(maxCount==currentSwitch.getValue()&&
+							maxCountSwitch>currentSwitch.getKey()){
+						maxCountSwitch=currentSwitch.getKey();
+					}
+				}
+			}
+		}
+		return maxCountSwitch;
 	}
 
 	@Override
 	public int minConnections() {
-		// TODO Auto-generated method stub
-		return 0;
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		LinkedList<Integer> allConnectionPath=new LinkedList<>();
+		//combine all the connectionPath into one linkList 
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			allConnectionPath.combineLinkList(phoneNumberPairList.reverseHead().getElement().getConnectionPath());
+		}
+		
+		for(int i=0;i<allConnectionPath.getSize();i++){
+			int switchID=allConnectionPath.reverseHead().getElement();
+			for(int j=0;j<switchesList.getCapacity();j++){
+				SwitchElement currentSwitch=switchesList.getElement(j);
+				if(currentSwitch.getKey()==switchID){
+					currentSwitch.addCount();
+				}
+			}
+		}
+		
+		int minID=100000;
+		int minCount=allConnectionPath.getSize();
+		for(int j=0;j<switchesList.getCapacity();j++){
+			SwitchElement currentSwitch=switchesList.getElement(j);
+			int currentCount=currentSwitch.getValue();
+			int currentID=currentSwitch.getKey();
+			
+			if(minCount>currentSwitch.getValue()){
+				minCount=currentSwitch.getValue();
+				minID=currentSwitch.getKey();
+			}else if(minCount==currentSwitch.getValue()&&
+					minID>currentSwitch.getKey()){
+				minID=currentSwitch.getKey();
+			}	
+		}
+		return minID;
 	}
 
 	@Override
 	public int minConnections(LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return 0;
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		LinkedList<Integer> allConnectionPath=new LinkedList<>();
+		//combine all the connectionPath into one linkList 
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			CallPair element=phoneNumberPairList.reverseHead().getElement();
+			if(element.isIntime(startTime, endTime)){
+				allConnectionPath.combineLinkList(element.getConnectionPath());
+			}
+		}
+		for(int i=0;i<allConnectionPath.getSize();i++){
+			int switchID=allConnectionPath.reverseHead().getElement();
+			for(int j=0;j<switchesList.getCapacity();j++){
+				SwitchElement currentSwitch=switchesList.getElement(j);
+				if(currentSwitch.getKey()==switchID){
+					currentSwitch.addCount();
+				}
+			}
+		}
+		
+		int minID=100000;
+		int minCount=allConnectionPath.getSize();
+		for(int j=0;j<switchesList.getCapacity();j++){
+			SwitchElement currentSwitch=switchesList.getElement(j);
+			int currentCount=currentSwitch.getValue();
+			int currentID=currentSwitch.getKey();
+			
+			if(minCount>currentSwitch.getValue()){
+				minCount=currentSwitch.getValue();
+				minID=currentSwitch.getKey();
+			}else if(minCount==currentSwitch.getValue()&&
+					minID>currentSwitch.getKey()){
+				minID=currentSwitch.getKey();
+			}	
+		}
+		return minID;
 	}
 
 	@Override
@@ -138,6 +316,7 @@ public final class AutoTester implements TestAPI {
 		AutoTester test = new AutoTester();
 		long number=3742128469L;
 		test.called(number);
+		System.out.print(test.minConnections());
 		System.out.println("AutoTester Stub");
 	}
 }

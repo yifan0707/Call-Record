@@ -3,6 +3,7 @@ package au.edu.uq.itee.comp3506.assn2.entities;
 public class Node<T> {
 	private T element;
 	private Node nextNode;
+	
 	public Node(T object){
 		this.element=object;
 		nextNode=null;
