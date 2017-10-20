@@ -114,7 +114,7 @@ public class LinkedList<T> {
 	
 	public void combineLinkList(LinkedList<T> linkedList){
 		//current linked list empty
-		if(linkedList==null){
+		if(linkedList.getSize()==0){
 			return;
 		}else{
 			if(size==0){

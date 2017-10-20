@@ -44,9 +44,11 @@ public class DataReader {
 	
 	public void readRecordsFile(){
 		int lineNumber=0;
+		int invalidNumber=0;
 		//loop through every line
 		while(callRecordsShort.hasNextLine()){
 			lineNumber+=1;
+			int tokenNumber=0;
 			String record=callRecordsShort.nextLine();
 			lineScanner=new Scanner(record);
 			
@@ -57,6 +59,7 @@ public class DataReader {
 			//info before time stamp
 			
 			while(lineScanner.hasNextLong()){
+				tokenNumber+=1;
 				Long nextLong=lineScanner.nextLong();
 				System.out.println(nextLong);
 				//whether the number is SwitchID or PhoneNumber
@@ -80,8 +83,8 @@ public class DataReader {
 				callPair.setTimeStamp(time);
 			}
 			
-			
-			if(connectionPath.getSize()<=2){
+			//token sum of CallerSwitch, ReceiverSwitch and connectionPath should be bigger than 3  
+			if(tokenNumber<=3){
 				continue;
 			}else{
 				/*Remove the CallerSwitch and ReceiveSwitch from connectionPath
@@ -90,19 +93,21 @@ public class DataReader {
 				callPair.setCallerSwitch((Integer)connectionPath.removeHead().getElement());
 				callPair.setReceiverSwitch((Integer)connectionPath.removeTail().getElement());
 				callPair.setConnectionPath(connectionPath);
-				
 				//System.out.println(callPair.getCallerSwitch()+"Head");
 				//System.out.println(callPair.getReceiverSwitch()+"Tail");
 				System.out.println(isValid(callPair));
+				//c
 				if(isValid(callPair)){
 					phoneNumberList.addLast(new Node(callPair));
-
+				}else{
+					invalidNumber+=1;
 				}
 				//Node ha=new Node(phoneNumber);
 				//System.out.println(ha.getElement().getReceiver()+"before");
 				//System.out.println(ha.getElement().getReceiver()+"after");
 			}
 		}
+		System.out.println(invalidNumber);
 	}
 	
 	public void closeFile(){
@@ -120,21 +125,12 @@ public class DataReader {
 		LinkedList<Integer> connectionPath=callpair.getConnectionPath();
 		int receiverSwitch=callpair.getReceiverSwitch();
 		int callerSwitch=callpair.getCallerSwitch();
-		if(connectionPath.getSize()==1){
-			int headSwitch=(int)connectionPath.getHead().getElement();
-			if(headSwitch==receiverSwitch&&headSwitch==callerSwitch){
-				return true;
+		if(connectionPath.getSize()>0){
+			//First node in connection path is not the same with callerSwitchID
+			if(callerSwitch!=(int)connectionPath.getHead().getElement()){
+				return false;
 			}
-		}else if(connectionPath.getSize()>1){
-			int headSwitch=(int)connectionPath.getHead().getElement();
-			int tailSwitch=(int)connectionPath.getTail().getElement();
-			if(headSwitch==callerSwitch&&tailSwitch==receiverSwitch){
-				return true;
-			}
-		}else{
-			return false;
 		}
-		
-		return false;
+		return true;
 	}
 }
