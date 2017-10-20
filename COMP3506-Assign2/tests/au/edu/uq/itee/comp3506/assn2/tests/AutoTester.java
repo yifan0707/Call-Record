@@ -85,7 +85,7 @@ public final class AutoTester implements TestAPI {
 		List<Long> receivers=new ArrayList<Long>();
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
-			CallPair element=(CallPair)phoneNumberPairList.reverseHead().getElement();
+			CallPair element=phoneNumberPairList.reverseHead().getElement();
 				if(element.isIntime(startTime, endTime)){
 					if(element.getCaller()==dialler){
 						receivers.add(element.getReceiver());
@@ -143,26 +143,73 @@ public final class AutoTester implements TestAPI {
 
 	@Override
 	public List<Integer> findConnectionFault(long dialler) {
-		// TODO Auto-generated method stub
-		return null;
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		List<Integer> faultSwitches=new ArrayList<>();
+		//combine all the connectionPath into one linkList 
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			CallPair callpair=phoneNumberPairList.reverseHead().getElement();
+			if(callpair.getCaller()==dialler){
+				if(getfaultSwitchID(callpair)!=0){
+					faultSwitches.add(getfaultSwitchID(callpair));
+				}
+			}
+		}
+		return faultSwitches;
 	}
 
 	@Override
 	public List<Integer> findConnectionFault(long dialler, LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return null;
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		List<Integer> faultSwitches=new ArrayList<>();
+		//combine all the connectionPath into one linkList
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			CallPair callpair=phoneNumberPairList.reverseHead().getElement();
+			//is call record within time
+			if(callpair.isIntime(startTime, endTime)){
+				//is the assigned caller
+				if(callpair.getCaller()==dialler){
+					//does any switch wrong
+					if(getfaultSwitchID(callpair)!=0){
+						faultSwitches.add(getfaultSwitchID(callpair));
+					}
+				}
+			}
+		}
+		return faultSwitches;
 	}
 
 	@Override
 	public List<Integer> findReceivingFault(long reciever) {
-		// TODO Auto-generated method stub
-		return null;
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		List<Integer> faultSwitches=new ArrayList<>();
+		//combine all the connectionPath into one linkList 
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			CallPair callpair=phoneNumberPairList.reverseHead().getElement();
+			if(callpair.getReceiver()==reciever){
+				if(getfaultSwitchID(callpair)!=0){
+					faultSwitches.add(getfaultSwitchID(callpair));
+				}
+			}
+		}
+		return faultSwitches;
 	}
 
 	@Override
 	public List<Integer> findReceivingFault(long reciever, LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return null;
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		List<Integer> faultSwitches=new ArrayList<>();
+		//combine all the connectionPath into one linkList 
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			CallPair callpair=phoneNumberPairList.reverseHead().getElement();
+			if(callpair.isIntime(startTime, endTime)){
+				if(callpair.getReceiver()==reciever){
+					if(getfaultSwitchID(callpair)!=0){
+						faultSwitches.add(getfaultSwitchID(callpair));
+					}
+				}
+			}
+		}
+		return faultSwitches;
 	}
 
 	
@@ -249,20 +296,18 @@ public final class AutoTester implements TestAPI {
 				}
 			}
 		}
-		
 		int minID=100000;
 		int minCount=allConnectionPath.getSize();
 		for(int j=0;j<switchesList.getCapacity();j++){
 			SwitchElement currentSwitch=switchesList.getElement(j);
 			int currentCount=currentSwitch.getValue();
 			int currentID=currentSwitch.getKey();
-			
-			if(minCount>currentSwitch.getValue()){
-				minCount=currentSwitch.getValue();
-				minID=currentSwitch.getKey();
-			}else if(minCount==currentSwitch.getValue()&&
-					minID>currentSwitch.getKey()){
-				minID=currentSwitch.getKey();
+			if(minCount>currentCount){
+				minCount=currentCount;
+				minID=currentID;
+			}else if(minCount==currentCount&&
+					minID>currentID){
+				minID=currentID;
 			}	
 		}
 		return minID;
@@ -309,15 +354,54 @@ public final class AutoTester implements TestAPI {
 
 	@Override
 	public List<CallRecord> callsMade(LocalDateTime startTime, LocalDateTime endTime) {
-		// TODO Auto-generated method stub
-		return null;
+		List<CallRecord> callRecords=new ArrayList<>();
+		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		for(int i=0;i<phoneNumberPairList.getSize();i++){
+			CallPair callpair=phoneNumberPairList.reverseHead().getElement();
+			List<Integer> connectionPath=new ArrayList<Integer>();
+			if(callpair.isIntime(startTime, endTime)){
+				for(int j=0;j<callpair.getConnectionPath().getSize();j++){
+					if(callpair.getConnectionPath().getSize()!=0){
+						connectionPath.add(((int)callpair.getConnectionPath().reverseHead().getElement()));
+					}
+				}
+			}
+			callRecords.add(new CallRecord(callpair.getCaller(), callpair.getReceiver(),
+	                  callpair.getCallerSwitch(), callpair.getReceiverSwitch(),
+	                  connectionPath, callpair.getTimeStamp()));
+		}
+		return callRecords;
 	}
 	
 	public static void main(String[] args) throws IOException {
 		AutoTester test = new AutoTester();
 		long number=3742128469L;
 		test.called(number);
-		System.out.print(test.minConnections());
-		System.out.println("AutoTester Stub");
+		System.out.println(test.findConnectionFault(number));
+		//System.out.println(test.findConnectionFault(number).size());
+		//System.out.print(test.minConnections());
+		//System.out.println("AutoTester Stub");
+	}
+	
+	
+	public int getfaultSwitchID(CallPair callpair){
+		LinkedList<Integer> connectionPath=callpair.getConnectionPath();	
+		// connection Path is null then the callerSwitch is fault 
+		if(connectionPath.getSize()==0){
+			return callpair.getCallerSwitch();
+		}
+		//the connectionpath's size is one and the fault is at the CallerSwitch
+		else if(connectionPath.getSize()==1){
+			if((int)connectionPath.getHead().getElement()!=callpair.getReceiverSwitch()){
+				return (int)connectionPath.getHead().getElement();
+			}
+		}
+		if(connectionPath.getSize()>=2){
+			//the final switch in the connection path is not the same as receiver's switch
+			if((int)connectionPath.getTail().getElement()!=callpair.getReceiverSwitch()){
+				return (int)connectionPath.getTail().getElement();
+				}
+		}
+		return 0;
 	}
 }

@@ -75,7 +75,6 @@ public class DataReader {
 					}
 				}
 			}
-			
 			//info of time stamp
 			while(lineScanner.hasNext()){
 				String timeStamp=lineScanner.next();
@@ -107,7 +106,7 @@ public class DataReader {
 				//System.out.println(ha.getElement().getReceiver()+"after");
 			}
 		}
-		System.out.println(invalidNumber);
+		//System.out.println(invalidNumber); only 2 invalid
 	}
 	
 	public void closeFile(){

@@ -127,6 +127,7 @@ public class LinkedList<T> {
 				size=size+linkedList.getSize();
 			}
 		}
-		
 	}
+	
+	
 }

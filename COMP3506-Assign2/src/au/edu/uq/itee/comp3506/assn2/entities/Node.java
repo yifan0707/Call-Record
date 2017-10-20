@@ -28,4 +28,12 @@ public class Node<T> {
 	public void setElement(T object){
 		this.element=object;
 	}
+	
+	public boolean hasNext(){
+		if(nextNode==null){
+			return false;
+		}else{
+			return true;
+		}
+	}
 }
