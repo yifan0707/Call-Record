@@ -38,16 +38,6 @@ public class CallPair {
 		this.receiverSwitch = receiverSwitch;
 	}
 
-	public int getReceiverID() {
-		return receiverID;
-	}
-
-	public void setReceiverID(int receiverID) {
-		this.receiverID = receiverID;
-	}
-
-	private int receiverID;
-	
 	public CallPair(Integer lineNumber){
 		this.caller=0;
 		this.receiver=0;

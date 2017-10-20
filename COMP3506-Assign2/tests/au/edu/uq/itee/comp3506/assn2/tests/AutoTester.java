@@ -165,6 +165,7 @@ public final class AutoTester implements TestAPI {
 		return null;
 	}
 
+	
 	@Override
 	public int maxConnections() {
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();

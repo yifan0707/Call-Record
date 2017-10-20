@@ -58,6 +58,7 @@ public class DataReader {
 			
 			while(lineScanner.hasNextLong()){
 				Long nextLong=lineScanner.nextLong();
+				System.out.println(nextLong);
 				//whether the number is SwitchID or PhoneNumber
 				if(nextLong<=100000&&nextLong>=10000){
 					int nextInt=nextLong.intValue();
@@ -89,9 +90,14 @@ public class DataReader {
 				callPair.setCallerSwitch((Integer)connectionPath.removeHead().getElement());
 				callPair.setReceiverSwitch((Integer)connectionPath.removeTail().getElement());
 				callPair.setConnectionPath(connectionPath);
+				
 				//System.out.println(callPair.getCallerSwitch()+"Head");
 				//System.out.println(callPair.getReceiverSwitch()+"Tail");
-				phoneNumberList.addLast(new Node(callPair));
+				System.out.println(isValid(callPair));
+				if(isValid(callPair)){
+					phoneNumberList.addLast(new Node(callPair));
+
+				}
 				//Node ha=new Node(phoneNumber);
 				//System.out.println(ha.getElement().getReceiver()+"before");
 				//System.out.println(ha.getElement().getReceiver()+"after");
@@ -109,4 +115,26 @@ public class DataReader {
 		return phoneNumberList;
 	}
 	
+	
+	public boolean isValid(CallPair callpair){
+		LinkedList<Integer> connectionPath=callpair.getConnectionPath();
+		int receiverSwitch=callpair.getReceiverSwitch();
+		int callerSwitch=callpair.getCallerSwitch();
+		if(connectionPath.getSize()==1){
+			int headSwitch=(int)connectionPath.getHead().getElement();
+			if(headSwitch==receiverSwitch&&headSwitch==callerSwitch){
+				return true;
+			}
+		}else if(connectionPath.getSize()>1){
+			int headSwitch=(int)connectionPath.getHead().getElement();
+			int tailSwitch=(int)connectionPath.getTail().getElement();
+			if(headSwitch==callerSwitch&&tailSwitch==receiverSwitch){
+				return true;
+			}
+		}else{
+			return false;
+		}
+		
+		return false;
+	}
 }
