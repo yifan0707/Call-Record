@@ -6,28 +6,41 @@ import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class DataReader {
-	
+	//scanners for switches, callRecordFile, callRecordShortFile
 	private Scanner switches;
 	private Scanner callRecords;
 	private Scanner callRecordsShort;
+	//scanners for each line
 	private Scanner lineScanner;
+	//LinkedList that contains all the call Record
 	private LinkedList<CallPair> phoneNumberList;
+	private LinkedList<CallPair> phoneNumberList2;
+	//linkedList that contains all the switchID
 	private SwitchList switchList;
-	
-	int[] switchesID=new int[20];
-	
-	public void openFile() throws IOException{
-		phoneNumberList=new LinkedList<CallPair>();
-		
-		try{
-			switches= new Scanner(new File("./data/switches.txt"));
-			callRecords=new Scanner(new File("./data/call-records.txt"));
-			callRecordsShort=new Scanner(new File("./data/call-records-short.txt"));
-		}catch(Exception e){
+
+	/**
+	 * method that open file
+	 * Space usage Complexity: 		O(1)
+	 * Runtime Complexity:			O(1)
+	 * @throws IOException
+	 */
+	public void openFile() throws IOException {
+		phoneNumberList = new LinkedList<>();
+		phoneNumberList2 = new LinkedList<>();
+		try {
+			switches = new Scanner(new File("./data/switches.txt"));
+			callRecords = new Scanner(new File("./data/call-records.txt"));
+			callRecordsShort = new Scanner(new File("./data/call-records-short.txt"));
+		} catch (Exception e) {
 			throw new IOException("File does not found!");
-		}	
+		}
 	}
-	
+
+	/**
+	 * Space usage Complexity: 		O(1)
+	 * Runtime Complexity:			O(1)
+	 * @return linkedList<SwitchElement>
+	 */
 	public SwitchList readSwitchesFile(){
 		int number=0;
 		if(switches.hasNextInt()){
@@ -41,10 +54,137 @@ public class DataReader {
 		}
 		return switchList;
 	}
-	
-	public void readRecordsFile(){
+
+	/**
+	 * Space Complexity:
+	 * 	1. hasNextLine()			O(1)
+	 * 	2. nextLine()				O(1)
+	 * 	3. hasNextLong()			O(1)
+	 * 	4. intValue()				O(1)
+	 * 	5. addLast()				O(1)
+	 * 	6. setCaller()				O(1)
+	 * 	7. getCaller()				O(1)
+	 * 	8. setReceiver()			O(1)
+	 * 	9. setCallerSwitch()		O(1)
+	 * 	10. setReceiverSwitch()		O(1)
+	 * 	11. setConnectionPath()		O(1)
+	 * 	12. isValid() 				O(1)
+	 * 	13. removeTail()			O(1)
+	 * 	14. removeHead()			O(1)
+	 *
+	 * Runtime Complexity:
+	 * 	1. hasNextLine()			O(1)
+	 * 	2. nextLine()				O(1)
+	 * 	3. hasNextLong()			O(1)
+	 * 	4. intValue()				O(1)
+	 * 	5. addLast()				O(1)
+	 * 	6. setCaller()				O(1)
+	 * 	7. getCaller()				O(1)
+	 * 	8. setReceiver()			O(1)
+	 * 	9. setCallerSwitch()		O(1)
+	 * 	10. setReceiverSwitch()		O(1)
+	 * 	11. setConnectionPath()		O(1)
+	 * 	12. isValid() 				O(1)
+	 * 	13. removeTail()			O(n)
+	 * 	14. removeHead()			O(1)
+	 *
+	 * two while loop has been used to read all the data from the file which will iterate n(file lines count) times and
+	 * m(line tokens count) times. RemoveTail() method's runtime complexity is O(b) (b is the size of the linkedlist)
+	 * in worst case
+	 * Space usage Complexity: 		O(m*n) => O(n^2)
+	 * Runtime Complexity:			O(n*m+b) => O(n^2)
+	 */
+	public void readRecordFile(){
 		int lineNumber=0;
-		int invalidNumber=0;
+		//loop through every line
+		while(callRecords.hasNextLine()){
+			lineNumber+=1;
+			int tokenNumber=0;
+			String record=callRecords.nextLine();
+			lineScanner=new Scanner(record);
+			//initialise a connectionPath that contains CallerSwitch& ReceiverSwitch
+			LinkedList<Integer> connectionPath=new LinkedList<Integer>();
+			//initialise a callPair with its lineNumber
+			CallPair callPair=new CallPair(lineNumber);
+
+			//info before time stamp
+			while(lineScanner.hasNextLong()){
+				tokenNumber+=1;
+				Long nextLong=lineScanner.nextLong();
+				//whether the number is SwitchID or PhoneNumber
+				if(nextLong<=100000&&nextLong>=10000){
+					int nextInt=nextLong.intValue();
+					connectionPath.addLast(new Node<Integer> (nextInt));
+				}else if(nextLong>=1000000000){
+					//store phoneNumber as caller and receiver according to accessing order
+					if(callPair.getCaller()==0){
+						callPair.setCaller(nextLong);
+					}else{
+						callPair.setReceiver(nextLong);
+					}
+				}
+			}
+
+			//info of time stamp
+			while(lineScanner.hasNext()){
+				String timeStamp=lineScanner.next();
+				LocalDateTime time = LocalDateTime.parse(timeStamp);
+				callPair.setTimeStamp(time);
+			}
+
+			//token sum of CallerSwitch, ReceiverSwitch and connectionPath should be bigger than 3
+			if(tokenNumber<=3){
+				continue;
+			}else{
+				/*Remove the CallerSwitch and ReceiveSwitch from connectionPath
+				 *and store the data into callPair
+				*/
+				callPair.setCallerSwitch((Integer)connectionPath.removeHead().getElement());
+				callPair.setReceiverSwitch((Integer)connectionPath.removeTail().getElement());
+				callPair.setConnectionPath(connectionPath);
+				if(isValid(callPair)){
+					phoneNumberList2.addLast(new Node(callPair));
+				}
+			}
+		}
+	}
+
+	/**
+	 * Space Complexity:
+	 * 	1. hasNextLine()			O(1)
+	 * 	2. nextLine()				O(1)
+	 * 	3. hasNextLong()			O(1)
+	 * 	4. intValue()				O(1)
+	 * 	5. addLast()				O(1)
+	 * 	6. setCaller()				O(1)
+	 * 	7. getCaller()				O(1)
+	 * 	8. setReceiver()			O(1)
+	 * 	9. setCallerSwitch()		O(1)
+	 * 	10. setReceiverSwitch()		O(1)
+	 * 	11. setConnectionPath()		O(1)
+	 * 	12. isValid() 				O(1)
+	 *
+	 * Runtime Complexity:
+	 * 	1. hasNextLine()			O(1)
+	 * 	2. nextLine()				O(1)
+	 * 	3. hasNextLong()			O(1)
+	 * 	4. intValue()				O(1)
+	 * 	5. addLast()				O(1)
+	 * 	6. setCaller()				O(1)
+	 * 	7. getCaller()				O(1)
+	 * 	8. setReceiver()			O(1)
+	 * 	9. setCallerSwitch()		O(1)
+	 * 	10. setReceiverSwitch()		O(1)
+	 * 	11. setConnectionPath()		O(1)
+	 * 	12. isValid() 				O(1)
+	 *
+	 * two while loop has been used to read all the data from the file which will iterate n(file lines count) times and
+	 * m(line tokens count) times.
+	 * Space usage Complexity: 		O(m*n) => O(n^2)
+	 * Runtime Complexity:			O(n*m) => O(n^2)
+	 */
+	public void readShortRecordsFile(){
+		int lineNumber=0;
 		//loop through every line
 		while(callRecordsShort.hasNextLine()){
 			lineNumber+=1;
@@ -92,37 +232,54 @@ public class DataReader {
 				callPair.setCallerSwitch((Integer)connectionPath.removeHead().getElement());
 				callPair.setReceiverSwitch((Integer)connectionPath.removeTail().getElement());
 				callPair.setConnectionPath(connectionPath);
-				//System.out.println(callPair.getCallerSwitch()+"Head");
-				//System.out.println(callPair.getReceiverSwitch()+"Tail");
-				System.out.println(isValid(callPair));
-				//c
 				if(isValid(callPair)){
 					phoneNumberList.addLast(new Node(callPair));
-				}else{
-					invalidNumber+=1;
 				}
-				//Node ha=new Node(phoneNumber);
-				//System.out.println(ha.getElement().getReceiver()+"before");
-				//System.out.println(ha.getElement().getReceiver()+"after");
 			}
 		}
-		//System.out.println(invalidNumber); only 2 invalid
 	}
-	
+
+	/**
+	 * method used to close all file
+	 * Space usage Complexity: 		O(1)
+	 * Runtime Complexity:			O(1)
+	 * @return	the data read from call-records-short
+	 */
 	public void closeFile(){
 		switches.close();
 		callRecords.close();
 		callRecordsShort.close();
 	}
-	
+
+	/**
+	 * get method of phoneNumberLinkedList
+	 * Space usage Complexity: 		O(1)
+	 * Runtime Complexity:			O(1)
+	 * @return	the data read from call-records-short
+	 */
 	public LinkedList<CallPair> getphoneNumberLinkedList(){
 		return phoneNumberList;
 	}
-	
-	
+
+	/**
+	 * get method of phoneNumberLinkedList2
+	 * Space usage Complexity: 		O(1)
+	 * Runtime Complexity:			O(1)
+	 * @return	the data read from call-records
+	 */
+	public LinkedList<CallPair> getphoneNumberList2() {
+		return phoneNumberList2;
+	}
+
+	/**
+	 * method that used to check whether the callpair is faulty
+	 * Space usage Complexity: 		O(n)
+	 * Runtime Complexity:			O(1)
+	 * @param callpair
+	 * @return
+	 */
 	public boolean isValid(CallPair callpair){
 		LinkedList<Integer> connectionPath=callpair.getConnectionPath();
-		int receiverSwitch=callpair.getReceiverSwitch();
 		int callerSwitch=callpair.getCallerSwitch();
 		if(connectionPath.getSize()>0){
 			//First node in connection path is not the same with callerSwitchID

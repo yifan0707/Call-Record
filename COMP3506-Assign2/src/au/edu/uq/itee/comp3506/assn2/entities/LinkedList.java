@@ -1,28 +1,58 @@
 package au.edu.uq.itee.comp3506.assn2.entities;
 
 public class LinkedList<T> {
-	private int size;
-	private Node<T> head;
-	private Node<T> tail;
+	private int size;		//size of the linked list
+	private Node<T> head;	//head node of the linked list
+	private Node<T> tail;	//tail node of the linked list
 
+	/**
+	 * constructor of the linked list
+	 * Runtime Complexity:			O(1)
+	 * Space Usage Complexity: 		O(1)
+	 */
 	public LinkedList(){
 		size=0;
 		head=null;
 		tail=null;
 	}
-	
+
+	/**
+	 * get method of the size of the linked list
+	 * Runtime Complexity:			O(1)
+	 * Space Usage Complexity: 		O(1)
+	 * @return	current size of the linked list
+	 */
 	public int getSize(){
 		return size;
 	}
-	
+
+	/**
+	 * get method of the tail of the linked list
+	 * Runtime Complexity:			O(1)
+	 * Space Usage Complexity: 		O(1)
+	 * @return	current tail node of the linked list
+	 */
 	public Node getTail(){
 		return tail;
 	}
-	
+
+	/**
+	 * get method of the tail of the linked list
+	 * Runtime Complexity:			O(1)
+	 * Space Usage Complexity: 		O(1)
+	 * @return	current head node of the linked list
+	 */
 	public Node getHead(){
 		return head;
 	}
-	
+
+
+
+	/**
+	 * add a nextNode to the last of the linked list
+	 * Runtime Complexity:			O(1)
+	 * Space Usage Complexity: 		O(1)
+	 */
 	public void addLast(Node newNode){
 		if(newNode==null){
 			return;
@@ -38,7 +68,14 @@ public class LinkedList<T> {
 			}
 		}
 	}
-	
+
+
+	/**
+	 * remove the head node of the linked list
+	 * Runtime Complexity:			O(1)
+	 * Space Usage Complexity: 		O(1)
+	 * @return	previous head node of the linked list/ null if no head node is null
+	 */
 	public Node removeHead(){
 		Node temp;
 		if(size==2){
@@ -62,7 +99,14 @@ public class LinkedList<T> {
 		}
 		return null;
 	}
-	
+
+
+	/**
+	 * remove the tail node of the linked list
+	 * Runtime Complexity:			O(n)
+	 * Space Usage Complexity: 		O(1)
+	 * @return	previous tail node of the linked list/ null if no tail node is null
+	 */
 	public Node removeTail(){
 		Node temp;
 		if(size==2){
@@ -84,7 +128,7 @@ public class LinkedList<T> {
 			temp=tail;
 			tail=head.getNext();
 			tail.setNext(null);
-			return tail;
+			return temp;
 		}else if(size>3){
 			temp=tail;
 			Node nextNode=head.getNext();
@@ -101,6 +145,8 @@ public class LinkedList<T> {
 	
 	/**
 	 * this method would move the first node to the last
+	 * Runtime Complexity:			O(1)
+	 * Space Usage Complexity: 		O(1)
 	 * @return the original head node
 	 */
 	public Node<T> reverseHead(){

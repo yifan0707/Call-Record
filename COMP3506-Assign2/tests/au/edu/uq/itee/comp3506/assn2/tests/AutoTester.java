@@ -24,20 +24,19 @@ public final class AutoTester implements TestAPI {
 	// TODO Provide any data members required for the methods below to work correctly with your application.
 	DataReader dataReader;
 	LinkedList<CallPair> phoneNumberPairList;
-	CallPair phoneNumber;
 	SwitchList switchesList;
 	public AutoTester() throws IOException{
 		// TODO Create and initialise any objects required by the methods below.
 		dataReader=new DataReader();
 		dataReader.openFile();
 		switchesList=dataReader.readSwitchesFile();
-		dataReader.readRecordsFile();
+		dataReader.readRecordFile();
+		dataReader.readShortRecordsFile();
 		dataReader.closeFile();
 		
 	}
 	
 	/**
-	 * 
 	 * Runtime Complexity of used method: 
 	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
 	 * 	2. getSize()					Runtime Complexity: O(1);	
@@ -48,7 +47,10 @@ public final class AutoTester implements TestAPI {
 	 *  
 	 * In the method, the for loop has been used which is linear runtime complexity. Meanwhile other methods' 
 	 * runtime complexity is constant. Thus the whole runtime complexity of the method is O(n) 
-	 * Runtime Complexity of the whole method:O(n) 
+	 * Runtime Complexity of the whole method:O(n)
+	 *
+	 * @param dialler The phone number that initiated the calls.
+	 * @return
 	 */
 	@Override
 	public List<Long> called(long dialler) {
@@ -63,8 +65,6 @@ public final class AutoTester implements TestAPI {
 		return receivers;
 	}
 
-	
-	
 	/**
 	 * 
 	 * Runtime Complexity of used method: 
@@ -78,7 +78,12 @@ public final class AutoTester implements TestAPI {
 	 *  
 	 * In the method, the for loop has been used which is linear runtime complexity. Meanwhile other methods' 
 	 * runtime complexity is constant. Thus the whole runtime complexity of the method is O(n) 
-	 * Runtime Complexity of the whole method:O(n) 
+	 * Runtime Complexity of the whole method:O(n)
+	 *
+	 * @param dialler The phone number that initiated the calls.
+	 * @param startTime Start of time period.
+	 * @param endTime End of time period.
+	 * @return
 	 */
 	@Override
 	public List<Long> called(long dialler, LocalDateTime startTime, LocalDateTime endTime) {
@@ -98,7 +103,6 @@ public final class AutoTester implements TestAPI {
 	
 	
 	/**
-	 * 
 	 * Runtime Complexity of used method: 
 	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
 	 * 	2. getSize()					Runtime Complexity: O(1);	
@@ -109,14 +113,17 @@ public final class AutoTester implements TestAPI {
 	 *  
 	 * In the method, the for loop has been used which is linear runtime complexity. Meanwhile other methods' 
 	 * runtime complexity is constant. Thus the whole runtime complexity of the method is O(n) 
-	 * Runtime Complexity of the whole method:O(n) 
+	 * Runtime Complexity of the whole method:O(n)
+	 *
+	 * @param receiver The phone number that received the calls.
+	 * @return
 	 */
 	@Override
 	public List<Long> callers(long receiver) {
 		List<Long> caller=new ArrayList<Long>();
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
-			CallPair element=(CallPair)phoneNumberPairList.reverseHead().getElement();
+			CallPair element=phoneNumberPairList.reverseHead().getElement();
 				if(element.getReceiver()==receiver){
 					caller.add(element.getCaller());
 			}
@@ -124,14 +131,28 @@ public final class AutoTester implements TestAPI {
 		return caller;
 	}
 
-	
-	
+
+
+	/**
+	 * Runtime Complexity of used method:
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 *  5. getCaller()					Runtime Complexity: O(1);
+	 *  6. getReceiver()				Runtime Complexity: O(1);
+	 *  7. isInTime()					Runtime Complexity:	O(1);
+	 *
+	 * In the method, the for loop has been used which is linear runtime complexity. Meanwhile other methods'
+	 * runtime complexity is constant. Thus the whole runtime complexity of the method is O(n)
+	 * Runtime Complexity of the whole method:O(n)
+	 */
 	@Override
 	public List<Long> callers(long receiver, LocalDateTime startTime, LocalDateTime endTime) {
 		List<Long> callers=new ArrayList<Long>();
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
-			CallPair element=(CallPair)phoneNumberPairList.reverseHead().getElement();
+			CallPair element=phoneNumberPairList.reverseHead().getElement();
 				if(element.isIntime(startTime, endTime)){
 					if(element.getReceiver()==receiver){
 						callers.add(element.getCaller());
@@ -141,6 +162,23 @@ public final class AutoTester implements TestAPI {
 		return callers;
 	}
 
+
+	/**
+	 * Runtime Complexity of used method:
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 * 	5. getCaller()					Runtime Complexity: O(1);
+	 * 	6. getfaultSwitchID()			Runtime Complexity: O(1);
+	 * 	7. add()						Runtime Complexity: O(1);
+	 *
+	 * For this method only one for loop has been used to loop through phoneNumberList which will be iterated for
+	 * n(phoneNumberList size) times. Other operation would be either took constant time or is primitive operations.
+	 * Runtime complexity is: O(n)
+	 * @param dialler The phone number that initiated the calls.
+	 * @return List of switch ID that is faulty
+	 */
 	@Override
 	public List<Integer> findConnectionFault(long dialler) {
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
@@ -157,6 +195,26 @@ public final class AutoTester implements TestAPI {
 		return faultSwitches;
 	}
 
+
+	/**
+	 * Runtime Complexity of used method:
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 * 	5. isIntime()					Runtime Complexity: O(1);
+	 * 	6. getCaller()					Runtime Complexity: O(1);
+	 * 	7. getfaultSwitchID()			Runtime Complexity: O(1);
+	 * 	8. add()						Runtime Complexity: O(1);
+	 *
+	 * For this method only one for loop has been used to loop through phoneNumberList which will be iterated for
+	 * n(phoneNumberList size) times. Other operations/methods would be either took constant time or is primitive operations.
+	 * Runtime complexity is: O(n)
+	 * @param dialler The phone number that initiated the calls.
+	 * @param startTime Start of time period.
+	 * @param endTime End of time period.
+	 * @return List of switch ID that is faulty
+	 */
 	@Override
 	public List<Integer> findConnectionFault(long dialler, LocalDateTime startTime, LocalDateTime endTime) {
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
@@ -178,6 +236,22 @@ public final class AutoTester implements TestAPI {
 		return faultSwitches;
 	}
 
+	/**
+	 * Runtime Complexity of used method:
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 * 	5. getReceiver()				Runtime Complexity: O(1);
+	 * 	6. getfaultSwitchID()			Runtime Complexity: O(1);
+	 * 	7. add()						Runtime Complexity: O(1);
+	 *
+	 * For this method only one for loop has been used to loop through phoneNumberList which will be iterated for
+	 * n(phoneNumberList size) times. Other operations/methods would be either took constant time or is primitive operations.
+	 * Runtime complexity is: O(n)
+	 * @param reciever The phone number that should have received the calls.
+	 * @return
+	 */
 	@Override
 	public List<Integer> findReceivingFault(long reciever) {
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
@@ -194,6 +268,23 @@ public final class AutoTester implements TestAPI {
 		return faultSwitches;
 	}
 
+	/**
+	 * Runtime Complexity of used method:
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 * 	5. isIntime()					Runtime Complexity: O(1);
+	 * 	6. getReceiver()				Runtime Complexity: O(1);
+	 * 	7. getfaultSwitchID()			Runtime Complexity: O(1);
+	 * 	8. add()						Runtime Complexity: O(1);
+	 *
+	 * For this method only one for loop has been used to loop through phoneNumberList which will be iterated for
+	 * n(phoneNumberList size) times. Other operations/methods would be either took constant time or is primitive operations.
+	 * Runtime complexity is: O(n)
+	 * @param reciever The phone number that should have received the calls.
+	 * @return
+	 */
 	@Override
 	public List<Integer> findReceivingFault(long reciever, LocalDateTime startTime, LocalDateTime endTime) {
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
@@ -212,7 +303,31 @@ public final class AutoTester implements TestAPI {
 		return faultSwitches;
 	}
 
-	
+
+
+
+
+	/**
+	 * Runtime Complexity of used method:
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 *  5. combineLinkList()			Runtime Complexity: O(1);
+	 *  6. getCapacity()				Runtime Complexity: O(1);
+	 *  7. addCount()					Runtime Complexity: O(1);
+	 *
+	 * Initially, it will loop through the call record linked list and the methods inside the loop would execute
+	 * n(LinkedList<CallPair> size) times. During each iteration, it would connection the current
+	 * linkedList(connectionPath) behind the previous linkedList. As a result, all the connectionPath would be integrate
+	 * into one big linkedList. Then, another for loop which size is m(LinkedList<Integer> size) would be called to loop
+	 * through the big connectionPath linkedList and according to its switchID, find itself inside the switchList which
+	 * will need a for loop through the switch list which size is 1000 and add one connection count.
+	 * At last, return the maximum count Switch
+	 * The runtime complexity of the method would be: O(n+m*1000*constant) => O(n)
+	 *
+	 * @return maxConnection count's switch ID
+	 */
 	@Override
 	public int maxConnections() {
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
@@ -244,6 +359,30 @@ public final class AutoTester implements TestAPI {
 		return maxCountSwitch;
 	}
 
+	/**
+	 * Runtime Complexity of used method:
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 *  5. isInTime()					Runtime Complexity:	O(1);
+	 *  6. combineLinkList()			Runtime Complexity: O(1);
+	 *  7. getCapacity()				Runtime Complexity: O(1);
+	 *  8. addCount()					Runtime Complexity: O(1);
+	 *
+	 * Initially, it will loop through the call record linked list and the methods inside the loop would execute
+	 * n(LinkedList<CallPair> size) times. During each iteration, it would connection the current
+	 * linkedList(connectionPath) behind the previous linkedList. As a result, all the connectionPath would be integrate
+	 * into one big linkedList. Then, another for loop which size is m(LinkedList<Integer> size) would be called to loop
+	 * through the big connectionPath linkedList and according to its switchID, find itself inside the switchList which
+	 * will need a for loop through the switch list which size is 1000 and add one connection count.
+	 * At last, return the maximum count Switch
+	 * The runtime complexity of the method would be: O(n+m*1000*constant) => O(n)
+	 *
+	 * @param startTime Start of time period.
+	 * @param endTime End of time period.
+	 * @return maxConnection count's switch ID
+	 */
 	@Override
 	public int maxConnections(LocalDateTime startTime, LocalDateTime endTime) {
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
@@ -255,12 +394,10 @@ public final class AutoTester implements TestAPI {
 				allConnectionPath.combineLinkList(element.getConnectionPath());
 			}
 		}
-		
 		int maxCount=0;
 		int maxCountSwitch=0;
 		for(int i=0;i<allConnectionPath.getSize();i++){
 			int switchID=allConnectionPath.reverseHead().getElement();
-			
 			for(int j=0;j<switchesList.getCapacity();j++){
 				SwitchElement currentSwitch=switchesList.getElement(j);
 				if(currentSwitch.getKey()==switchID){
@@ -278,6 +415,31 @@ public final class AutoTester implements TestAPI {
 		return maxCountSwitch;
 	}
 
+
+
+
+
+	/**
+	 * Runtime Complexity of used method:
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 *  5. combineLinkList()			Runtime Complexity: O(1);
+	 *  6. getCapacity()				Runtime Complexity: O(1);
+	 *  7. addCount()					Runtime Complexity: O(1);
+	 *
+	 * Initially, it will loop through the call record linked list and the methods inside the loop would execute
+	 * n(LinkedList<CallPair> size) times. During each iteration, it would connection the current
+	 * linkedList(connectionPath) behind the previous linkedList. As a result, all the connectionPath would be integrate
+	 * into one big linkedList. Then, another for loop which size is m(LinkedList<Integer> size) would be called to loop
+	 * through the big connectionPath linkedList and according to its switchID, find itself inside the switchList which
+	 * will need a for loop through the switch list which size is 1000 and add one connection count.
+	 * At last, return the minimum count Switch
+	 * The runtime complexity of the method would be: O(n+m*1000*constant+1000*constant) => O(n)
+	 *
+	 * @return minConnection count's switch ID
+	 */
 	@Override
 	public int minConnections() {
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
@@ -313,6 +475,30 @@ public final class AutoTester implements TestAPI {
 		return minID;
 	}
 
+	/**
+	 * Runtime Complexity of used method:
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 *  5. isInTime()					Runtime Complexity:	O(1);
+	 *  6. combineLinkList()			Runtime Complexity: O(1);
+	 *  7. getCapacity()				Runtime Complexity: O(1);
+	 *  8. addCount()					Runtime Complexity: O(1);
+	 *
+	 * Initially, it will loop through the call record linked list and the methods inside the loop would execute
+	 * n(LinkedList<CallPair> size) times. During each iteration, it would connection the current
+	 * linkedList(connectionPath) behind the previous linkedList. As a result, all the connectionPath would be integrate
+	 * into one big linkedList. Then, another for loop which size is m(LinkedList<Integer> size) would be called to loop
+	 * through the big connectionPath linkedList and according to its switchID, find itself inside the switchList which
+	 * will need a for loop through the switch list which size is 1000 and add one connection count.
+	 * At last, return the minimum count Switch
+	 * The runtime complexity of the method would be: O(n+m*1000*constant+1000*constant) => O(n)
+	 *
+	 * @param startTime Start of time period.
+	 * @param endTime End of time period.
+	 * @return minConnection count's switch ID
+	 */
 	@Override
 	public int minConnections(LocalDateTime startTime, LocalDateTime endTime) {
 		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
@@ -341,17 +527,35 @@ public final class AutoTester implements TestAPI {
 			int currentCount=currentSwitch.getValue();
 			int currentID=currentSwitch.getKey();
 			
-			if(minCount>currentSwitch.getValue()){
-				minCount=currentSwitch.getValue();
-				minID=currentSwitch.getKey();
-			}else if(minCount==currentSwitch.getValue()&&
-					minID>currentSwitch.getKey()){
-				minID=currentSwitch.getKey();
+			if(minCount>currentCount){
+				minCount=currentCount;
+				minID=currentID;
+			}else if(minCount==currentCount&&
+					minID>currentID){
+				minID=currentID;
 			}	
 		}
 		return minID;
 	}
 
+	/**
+	 * Runtime Complexity of used method:
+	 * 	1. getphoneNumberLinkedList() 	Runtime Complexity: O(1);
+	 * 	2. getSize()					Runtime Complexity: O(1);
+	 *  3. reverseHead() 				Runtime Complexity: O(1);
+	 * 	4. getElement()					Runtime Complexity: O(1);
+	 * 	5. isIntime()					Runtime Complexity: O(1);
+	 * 	6. getConnectionPath()			Runtime Complexity: O(1);
+	 *
+	 * 	In the first for loop, all the method inside of the list would be executed n(linkedlist<CallRecord> size) times.
+	 * 	Additionally, inside the first for loop, another for loop has been used to loop through the connection Path
+	 * 	and the method inside would executed for m(linkedList<Integer> size) times.
+	 * 	Thus, the runtime complexity of the method is ：O(m*n) => O(n^2)
+	 *
+	 * @param startTime Start of time period.
+	 * @param endTime End of time period.
+	 * @return List<CallRecord>
+	 */
 	@Override
 	public List<CallRecord> callsMade(LocalDateTime startTime, LocalDateTime endTime) {
 		List<CallRecord> callRecords=new ArrayList<>();
@@ -362,7 +566,7 @@ public final class AutoTester implements TestAPI {
 			if(callpair.isIntime(startTime, endTime)){
 				for(int j=0;j<callpair.getConnectionPath().getSize();j++){
 					if(callpair.getConnectionPath().getSize()!=0){
-						connectionPath.add(((int)callpair.getConnectionPath().reverseHead().getElement()));
+						connectionPath.add((callpair.getConnectionPath().reverseHead().getElement()));
 					}
 				}
 			}

@@ -6,30 +6,58 @@ import java.time.LocalDateTime;
  * this class will be used to store the data of Caller , Receiver connection
  */
 public class CallPair {
-	private long caller;
-	private long receiver;
-	private final int lineNumber;
-	private LocalDateTime timeStamp;
-	private LinkedList<Integer> connectionPath;
-	private int callerSwitch;
-	private int receiverSwitch;
-	
+	private long caller;							//caller phone number
+	private long receiver;							//receiver phone number
+	private final int lineNumber;					//line info of the current call record
+	private LocalDateTime timeStamp;				//call record time stamp
+	private LinkedList<Integer> connectionPath;		//call record connection path
+	private int callerSwitch;						//call record caller switch ID
+	private int receiverSwitch;						//call record receiver switch ID
+
+	/**
+	 * get method of the connection path
+	 * Runtime Complexity:			O(1)
+	 * Space usage Complexity:		O(1)
+	 * @return LinkedList<Integer> - connectionPath
+	 */
 	public LinkedList<Integer> getConnectionPath() {
 		return connectionPath;
 	}
 
+	/**
+	 * set method of the connection path
+	 * Runtime Complexity:			O(1)
+	 * Space usage Complexity:		O(1)
+	 */
 	public void setConnectionPath(LinkedList<Integer> connectionPath) {
 		this.connectionPath = connectionPath;
 	}
 
+	/**
+	 * get method of the caller Switch ID
+	 * Runtime Complexity:			O(1)
+	 * Space usage Complexity:		O(1)
+	 * @return the caller SwitchID (int)
+	 */
 	public int getCallerSwitch() {
 		return callerSwitch;
 	}
 
+	/**
+	 * set method of the Caller Switch ID
+	 * Runtime Complexity:			O(1)
+	 * Space usage Complexity:		O(1)
+	 */
 	public void setCallerSwitch(int callerSwitch) {
 		this.callerSwitch = callerSwitch;
 	}
 
+	/**
+	 * get method of the Receiver Switch ID
+	 * Runtime Complexity:			O(1)
+	 * Space usage Complexity:		O(1)
+	 * @return receiver switch ID(int)
+	 */
 	public int getReceiverSwitch() {
 		return receiverSwitch;
 	}
