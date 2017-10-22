@@ -6,6 +6,8 @@ public class SwitchList {
 
 	/**
 	 * constructor of the switchList 
+	 * Runtime Complexity:			O(1)
+	 * Space usage Complexity:		O(1)
 	 * @param capacity
 	 */
 	public SwitchList(int capacity){
@@ -13,14 +15,34 @@ public class SwitchList {
 		elements=new SwitchElement[capacity];
 	}
 	
+	/**
+	 * set method of the linked list element value according to given index
+	 * Runtime Complexity:			O(1)
+	 * Space usage Complexity:		O(1)
+	 * @param index
+	 * @param se
+	 */
 	public void setValue(int index,SwitchElement se){
 		this.elements[index]=se;
 	}
 	
+	/**
+	 * get method of the element of the linked list according to the given index
+	 * Runtime Complexity:			O(1)
+	 * Space usage Complexity:		O(1)
+	 * @param index
+	 * @return
+	 */
 	public SwitchElement getElement(int index){
 		return this.elements[index];
 	}
 	
+	/**
+	 * get method of the capacity
+	 * Runtime Complexity:			O(1)
+	 * Space usage Complexity:		O(1)
+	 * @return
+	 */
 	public int getCapacity(){
 		return capacity;
 	}
