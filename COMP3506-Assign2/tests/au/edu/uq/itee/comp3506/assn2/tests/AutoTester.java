@@ -154,10 +154,7 @@ public final class AutoTester implements TestAPI {
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
 			CallPair element=phoneNumberPairList.reverseHead().getElement();
 				if(element.isIntime(startTime, endTime)){
-
-					System.out.println("Linknumber:"+element.getLineNumber()+"within time should be called");
 					if(element.getReceiver()==receiver){
-						System.out.println("should be called");
 						callers.add(element.getCaller());
 					}
 				}
@@ -585,16 +582,7 @@ public final class AutoTester implements TestAPI {
 	
 	public static void main(String[] args) throws IOException {
 		AutoTester test = new AutoTester();
-		LocalDateTime endTime=LocalDateTime.parse("2017-09-21T19:37:30.455");
-		LocalDateTime startTime=LocalDateTime.parse("2017-09-01T19:37:30.455");
 
-		long number=3742128469L;
-		//test.called(number);
-		//System.out.println(test.callers(number));
-		//System.out.println(test.callers(number));
-		//System.out.println(test.findConnectionFault(number).size());
-		//System.out.print(test.minConnections());
-		//System.out.println("AutoTester Stub");
 	}
 	
 	/**
