@@ -1,5 +1,13 @@
 package au.edu.uq.itee.comp3506.assn2.entities;
 
+/**
+ * the class is mainly created as the list that contains all of the switch element
+ *
+ * all of the variables/methods are primitive types or primitive operations
+ *
+ * The Runtime Complexity: 		O(1)
+ * The SpaceUsage Complexity: 	O(n)
+ */
 public class SwitchList {
 	private SwitchElement[] elements;		//List that contains all the switch element
 	private int capacity;					//list capacity

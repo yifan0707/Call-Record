@@ -1,10 +1,24 @@
 package au.edu.uq.itee.comp3506.assn2.entities;
 
+import javax.swing.text.DateFormatter;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
+/**
+ * the main purpose of this class is to read the data from the  file and store data using constructed data structure
+ *
+ * the class initiated two linked list as length of n,m which will take up to O(n*m) => O(n^2) space.
+ * While the runtime complexity of the class would be O(n^2) as there are two method used to reading and storing the
+ * file data from the given txt file
+ *
+ * The runtime Complexity: O(n^2)
+ * The space usage Complexity: O(n^2)
+ *
+ */
 public class DataReader {
 	//scanners for switches, callRecordFile, callRecordShortFile
 	private Scanner switches;
@@ -28,20 +42,21 @@ public class DataReader {
 		phoneNumberList = new LinkedList<>();
 		phoneNumberList2 = new LinkedList<>();
 		try {
-			switches = new Scanner(new File("./data/switches.txt"));
-			callRecords = new Scanner(new File("./data/call-records.txt"));
-			callRecordsShort = new Scanner(new File("./data/call-records-short.txt"));
+			switches = new Scanner(new File("COMP3506-Assign2/data/switches.txt"));
+			callRecords = new Scanner(new File("COMP3506-Assign2/data/call-records.txt"));
+			callRecordsShort = new Scanner(new File("COMP3506-Assign2/data/call-records-short.txt"));
 		} catch (Exception e) {
 			throw new IOException("File does not found!");
 		}
 	}
 
 	/**
+	 * the class initiated the new linked list which length is 1000 which take constant space.
+	 * and a while loop has been used to store data into the linked list which will run 1000 times
 	 * Space usage Complexity: 		O(1)
 	 * Runtime Complexity:			O(1)
-	 * @return linkedList<SwitchElement>
 	 */
-	public SwitchList readSwitchesFile(){
+	public void readSwitchesFile(){
 		int number=0;
 		if(switches.hasNextInt()){
 			if(switches.nextInt()==1000){
@@ -52,7 +67,6 @@ public class DataReader {
 				}
 			}
 		}
-		return switchList;
 	}
 
 	/**
@@ -124,12 +138,24 @@ public class DataReader {
 					}
 				}
 			}
-
 			//info of time stamp
 			while(lineScanner.hasNext()){
 				String timeStamp=lineScanner.next();
-				LocalDateTime time = LocalDateTime.parse(timeStamp);
-				callPair.setTimeStamp(time);
+				try{
+					LocalDateTime time = LocalDateTime.parse(timeStamp);
+					if(time.getYear()==2017){
+						if(time.getMonth().toString().equals("SEPTEMBER")){
+							if(time.getDayOfMonth()>=1&&time.getDayOfMonth()<=21){
+								callPair.setTimeStamp(time);
+							}
+						}
+					}else{
+						break;
+					}
+				}catch (DateTimeParseException e){
+					e.printStackTrace();
+					break;
+				}
 			}
 
 			//token sum of CallerSwitch, ReceiverSwitch and connectionPath should be bigger than 3
@@ -201,7 +227,6 @@ public class DataReader {
 			while(lineScanner.hasNextLong()){
 				tokenNumber+=1;
 				Long nextLong=lineScanner.nextLong();
-				System.out.println(nextLong);
 				//whether the number is SwitchID or PhoneNumber
 				if(nextLong<=100000&&nextLong>=10000){
 					int nextInt=nextLong.intValue();
@@ -223,9 +248,7 @@ public class DataReader {
 			}
 			
 			//token sum of CallerSwitch, ReceiverSwitch and connectionPath should be bigger than 3  
-			if(tokenNumber<=3){
-				continue;
-			}else{
+			if(tokenNumber>3){
 				/*Remove the CallerSwitch and ReceiveSwitch from connectionPath
 				 *and store the data into callPair 
 				*/
@@ -272,6 +295,16 @@ public class DataReader {
 	}
 
 	/**
+	 * get method of the switchList
+	 * Space usage Complexity: 		O(1)
+	 * Runtime Complexity:			O(1)
+	 * @return switchList
+	 */
+	public SwitchList getSwitchList() {
+		return switchList;
+	}
+
+	/**
 	 * method that used to check whether the callpair is faulty
 	 * Space usage Complexity: 		O(n)
 	 * Runtime Complexity:			O(1)
@@ -283,7 +316,7 @@ public class DataReader {
 		int callerSwitch=callpair.getCallerSwitch();
 		if(connectionPath.getSize()>0){
 			//First node in connection path is not the same with callerSwitchID
-			if(callerSwitch!=(int)connectionPath.getHead().getElement()){
+			if(callerSwitch!=(int)connectionPath.getHead().getElement()||callpair.getTimeStamp()==null){
 				return false;
 			}
 		}

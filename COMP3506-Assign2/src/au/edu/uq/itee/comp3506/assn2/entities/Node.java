@@ -1,5 +1,12 @@
 package au.edu.uq.itee.comp3506.assn2.entities;
 
+/**
+ * this class is the linked list node that contains element info and pointer to the next node
+ *
+ * the runtime Complexity: 		O(1)
+ * the SpaceUsage Complexity: 	O(1)
+ * @param <T>
+ */
 public class Node<T> {
 	private T element;				//Element that the node carried
 	private Node nextNode;			//Info of NextNode

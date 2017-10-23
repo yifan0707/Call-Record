@@ -21,15 +21,13 @@ import au.edu.uq.itee.comp3506.assn2.entities.CallPair;
  * @author 
  */
 public final class AutoTester implements TestAPI {
-	// TODO Provide any data members required for the methods below to work correctly with your application.
-	DataReader dataReader;
-	LinkedList<CallPair> phoneNumberPairList;
-	SwitchList switchesList;
+	DataReader dataReader;							//instance that would read the file
+	LinkedList<CallPair> phoneNumberPairList;		//linked list that contains all the call pair
+	SwitchList switchesList;						//List that contains all the switch ID
 	public AutoTester() throws IOException{
-		// TODO Create and initialise any objects required by the methods below.
 		dataReader=new DataReader();
 		dataReader.openFile();
-		switchesList=dataReader.readSwitchesFile();
+		dataReader.readSwitchesFile();
 		dataReader.readRecordFile();
 		dataReader.readShortRecordsFile();
 		dataReader.closeFile();
@@ -55,7 +53,8 @@ public final class AutoTester implements TestAPI {
 	@Override
 	public List<Long> called(long dialler) {
 		List<Long> receivers=new ArrayList<Long>();
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		//phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
 			CallPair element=(CallPair)phoneNumberPairList.reverseHead().getElement();
 				if(element.getCaller()==dialler){
@@ -88,7 +87,8 @@ public final class AutoTester implements TestAPI {
 	@Override
 	public List<Long> called(long dialler, LocalDateTime startTime, LocalDateTime endTime) {
 		List<Long> receivers=new ArrayList<Long>();
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		//phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
 			CallPair element=phoneNumberPairList.reverseHead().getElement();
 				if(element.isIntime(startTime, endTime)){
@@ -121,7 +121,7 @@ public final class AutoTester implements TestAPI {
 	@Override
 	public List<Long> callers(long receiver) {
 		List<Long> caller=new ArrayList<Long>();
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
 			CallPair element=phoneNumberPairList.reverseHead().getElement();
 				if(element.getReceiver()==receiver){
@@ -150,11 +150,14 @@ public final class AutoTester implements TestAPI {
 	@Override
 	public List<Long> callers(long receiver, LocalDateTime startTime, LocalDateTime endTime) {
 		List<Long> callers=new ArrayList<Long>();
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
 			CallPair element=phoneNumberPairList.reverseHead().getElement();
 				if(element.isIntime(startTime, endTime)){
+
+					System.out.println("Linknumber:"+element.getLineNumber()+"within time should be called");
 					if(element.getReceiver()==receiver){
+						System.out.println("should be called");
 						callers.add(element.getCaller());
 					}
 				}
@@ -181,7 +184,8 @@ public final class AutoTester implements TestAPI {
 	 */
 	@Override
 	public List<Integer> findConnectionFault(long dialler) {
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		int j=0;
+		phoneNumberPairList=dataReader.getphoneNumberList2();
 		List<Integer> faultSwitches=new ArrayList<>();
 		//combine all the connectionPath into one linkList 
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
@@ -217,7 +221,7 @@ public final class AutoTester implements TestAPI {
 	 */
 	@Override
 	public List<Integer> findConnectionFault(long dialler, LocalDateTime startTime, LocalDateTime endTime) {
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
 		List<Integer> faultSwitches=new ArrayList<>();
 		//combine all the connectionPath into one linkList
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
@@ -254,7 +258,7 @@ public final class AutoTester implements TestAPI {
 	 */
 	@Override
 	public List<Integer> findReceivingFault(long reciever) {
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
 		List<Integer> faultSwitches=new ArrayList<>();
 		//combine all the connectionPath into one linkList 
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
@@ -287,7 +291,7 @@ public final class AutoTester implements TestAPI {
 	 */
 	@Override
 	public List<Integer> findReceivingFault(long reciever, LocalDateTime startTime, LocalDateTime endTime) {
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
 		List<Integer> faultSwitches=new ArrayList<>();
 		//combine all the connectionPath into one linkList 
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
@@ -330,7 +334,8 @@ public final class AutoTester implements TestAPI {
 	 */
 	@Override
 	public int maxConnections() {
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
+		switchesList=dataReader.getSwitchList();
 		LinkedList<Integer> allConnectionPath=new LinkedList<>();
 		//combine all the connectionPath into one linkList 
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
@@ -385,7 +390,8 @@ public final class AutoTester implements TestAPI {
 	 */
 	@Override
 	public int maxConnections(LocalDateTime startTime, LocalDateTime endTime) {
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
+		switchesList=dataReader.getSwitchList();
 		LinkedList<Integer> allConnectionPath=new LinkedList<>();
 		//combine all the connectionPath into one linkList 
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
@@ -442,13 +448,13 @@ public final class AutoTester implements TestAPI {
 	 */
 	@Override
 	public int minConnections() {
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
+		switchesList=dataReader.getSwitchList();
 		LinkedList<Integer> allConnectionPath=new LinkedList<>();
 		//combine all the connectionPath into one linkList 
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
 			allConnectionPath.combineLinkList(phoneNumberPairList.reverseHead().getElement().getConnectionPath());
 		}
-		
 		for(int i=0;i<allConnectionPath.getSize();i++){
 			int switchID=allConnectionPath.reverseHead().getElement();
 			for(int j=0;j<switchesList.getCapacity();j++){
@@ -501,7 +507,7 @@ public final class AutoTester implements TestAPI {
 	 */
 	@Override
 	public int minConnections(LocalDateTime startTime, LocalDateTime endTime) {
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
 		LinkedList<Integer> allConnectionPath=new LinkedList<>();
 		//combine all the connectionPath into one linkList 
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
@@ -559,7 +565,7 @@ public final class AutoTester implements TestAPI {
 	@Override
 	public List<CallRecord> callsMade(LocalDateTime startTime, LocalDateTime endTime) {
 		List<CallRecord> callRecords=new ArrayList<>();
-		phoneNumberPairList=dataReader.getphoneNumberLinkedList();
+		phoneNumberPairList=dataReader.getphoneNumberList2();
 		for(int i=0;i<phoneNumberPairList.getSize();i++){
 			CallPair callpair=phoneNumberPairList.reverseHead().getElement();
 			List<Integer> connectionPath=new ArrayList<Integer>();
@@ -579,9 +585,13 @@ public final class AutoTester implements TestAPI {
 	
 	public static void main(String[] args) throws IOException {
 		AutoTester test = new AutoTester();
+		LocalDateTime endTime=LocalDateTime.parse("2017-09-21T19:37:30.455");
+		LocalDateTime startTime=LocalDateTime.parse("2017-09-01T19:37:30.455");
+
 		long number=3742128469L;
-		test.called(number);
-		//System.out.println(test.findConnectionFault(number));
+		//test.called(number);
+		//System.out.println(test.callers(number));
+		//System.out.println(test.callers(number));
 		//System.out.println(test.findConnectionFault(number).size());
 		//System.out.print(test.minConnections());
 		//System.out.println("AutoTester Stub");

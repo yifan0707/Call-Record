@@ -1,5 +1,13 @@
 package au.edu.uq.itee.comp3506.assn2.entities;
 
+/**
+ * The class is mainly used for storing switch ID and its current connection count
+ *
+ * all of the variables/methods are primitive types or primitive operations
+ *
+ * The Runtime Complexity: 		O(1)
+ * The SpaceUsage Complexity: 	O(1)
+ */
 public class SwitchElement {
 	private int id;				//switch identifier
 	private int count;			//switch connection count

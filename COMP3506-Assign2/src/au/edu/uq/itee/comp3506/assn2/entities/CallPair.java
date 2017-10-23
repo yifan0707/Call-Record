@@ -2,8 +2,13 @@ package au.edu.uq.itee.comp3506.assn2.entities;
 
 import java.time.LocalDateTime;
 
-/*
- * this class will be used to store the data of Caller , Receiver connection
+/**
+ * this class is mainly used to store the individual call record data
+ *
+ * the class will take O(n) space since it has the linked list which size is n
+ * while the other instance are all primitive types.
+ * The Runtime Complexity: 		O(1)
+ * The Space Usage Complexity: 	O(n)
  */
 public class CallPair {
 	private long caller;							//caller phone number
@@ -171,28 +176,13 @@ public class CallPair {
 	 * @return
 	 */
 	public boolean isIntime(LocalDateTime startTime,LocalDateTime endTime){
-		//whether the day of month is within range
-		if(timeStamp.getDayOfMonth()>=startTime.getDayOfMonth()&&
-				timeStamp.getDayOfMonth()<=endTime.getDayOfMonth()){
-			//whether the hour is within range 
-			if(timeStamp.getHour()>=startTime.getHour()&&
-					timeStamp.getHour()<=endTime.getHour()){
-				//whether the minute is within range
-				if(timeStamp.getMinute()>=startTime.getMinute()&&
-						timeStamp.getMinute()<=endTime.getMinute()){
-					//whether the second is within range
-					if(timeStamp.getSecond()>=startTime.getSecond()&&
-							timeStamp.getSecond()<=endTime.getSecond()){
-						//whether the nano is within range
-						if(timeStamp.getNano()>=startTime.getNano()&&
-								timeStamp.getNano()<=endTime.getNano()){
-							return true;
-						}
-					}
-				}
-			}
+		if(timeStamp.isAfter(startTime)&&timeStamp.isBefore(endTime)){
+			return true;
+		}else if(timeStamp.isEqual(startTime)||timeStamp.isEqual(endTime)){
+			return true;
+		}else {
+			return false;
 		}
-		return false;
 	}
-	
+
 }
