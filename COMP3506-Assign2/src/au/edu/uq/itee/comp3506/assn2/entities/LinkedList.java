@@ -158,6 +158,12 @@ public class LinkedList<T> {
 	}
 	
 	
+	/**
+	 * method that used to combining two linked list into one
+	 * Runtime Complexity:			O(1)
+	 * Space Usage Complexity: 		O(1)
+	 * @param linkedList
+	 */
 	public void combineLinkList(LinkedList<T> linkedList){
 		//current linked list empty
 		if(linkedList.getSize()==0){

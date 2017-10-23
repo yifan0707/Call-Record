@@ -581,13 +581,22 @@ public final class AutoTester implements TestAPI {
 		AutoTester test = new AutoTester();
 		long number=3742128469L;
 		test.called(number);
-		System.out.println(test.findConnectionFault(number));
+		//System.out.println(test.findConnectionFault(number));
 		//System.out.println(test.findConnectionFault(number).size());
 		//System.out.print(test.minConnections());
 		//System.out.println("AutoTester Stub");
 	}
 	
-	
+	/**
+	 * method that used to determine whether given callpair is fault or not
+	 * 
+	 * Created a new instance of Arraylist. Thus the space usage complexity is O(n)
+	 * 
+	 * Runtime Complexity:			O(1)
+	 * Space usage Complexity:		O(n)
+	 * @param callpair
+	 * @return
+	 */
 	public int getfaultSwitchID(CallPair callpair){
 		LinkedList<Integer> connectionPath=callpair.getConnectionPath();	
 		// connection Path is null then the callerSwitch is fault 
